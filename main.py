@@ -71,5 +71,5 @@ class tlt2hGprsServer(asyncore.dispatcher):
         # new connection
         handler = GPRSHandler(sock)
 
-server = EchoServer('0.0.0.0', 9999)
+server = tlt2hGprsServer('0.0.0.0', 9999)
 asyncore.loop()
