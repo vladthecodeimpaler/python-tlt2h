@@ -7,9 +7,7 @@ class GPRSHandler(asyncore.dispatcher_with_send):
 
     def handle_read(self):
         data = self.recv(8192)
-
         if data:
-
             pattern = re.compile(r'#(\w*)#(\w*)#(\w*)#(\w*)#(\w*)\r\n#(.*\b)')
             gps_request = pattern.match(data.decode('utf-8'))
 
