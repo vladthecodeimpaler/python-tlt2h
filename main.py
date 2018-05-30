@@ -15,6 +15,7 @@ class GPRSHandler(asyncore.dispatcher_with_send):
             if gps_request is None:
                 print("invalid protocol")
                 self.close()
+                return
 
             # get the device id
             device_id = gps_request.group(1)
@@ -22,11 +23,12 @@ class GPRSHandler(asyncore.dispatcher_with_send):
             # get the GPRS request data
             gps_data = gps_request.group(6).split(',')
 
-            # check if the GPS data comming from the device is valid and not corrupted (A = valid, V = invalid)
+            # check if the GPS data coming from the device is valid and not corrupted (A = valid, V = invalid)
             is_valid = gps_data[2]
             if is_valid != "A":
                 print(device_id + ": " + is_valid)
                 self.close()
+                return
 
             # get latitude and pole: positive, negative
             # South = negative
@@ -45,12 +47,12 @@ class GPRSHandler(asyncore.dispatcher_with_send):
             # DDDMM.MMMM
             longitude_decimal = (float(longitude[0:3]) + (float(longitude[3:]) / 60.0)) * longitude_pole
 
-            mysql_datetime = time.strftime('%Y-%m-%d %H:%M:%S');
+            mysql_datetime = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
             data_gps = {
                 'device_id': device_id,
                 'latitude': latitude_decimal,
                 'longitude': longitude_decimal,
-                'updated_at': mysql_datetime,
+                'coordinates_updated_at': mysql_datetime,
             }
 
             print(data_gps)
